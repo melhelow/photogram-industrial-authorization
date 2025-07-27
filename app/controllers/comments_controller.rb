@@ -84,5 +84,6 @@ class CommentsController < ApplicationController
       fallback_location: root_url,  
       alert: "Not authorized"  
     )  
+     
   end 
 end
