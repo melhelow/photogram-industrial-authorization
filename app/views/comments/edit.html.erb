@@ -1,7 +1,22 @@
-<div class="row mb-4">
+<div class="row">
   <div class="col-md-6 offset-md-3">
-    <h1 class="display-4">editing comment</h1>
-    
-    <%= render 'form', comment: @comment %>
+    <div class="card">
+      <div class="card-header">
+        <h1 class="h4">Edit Comment</h1>
+      </div>
+      
+      <div class="card-body">
+        <%= form_with(model: @comment) do |form| %>
+          <div class="mb-3">
+            <%= form.label :body, class: "form-label" %>
+            <%= form.text_area :body, class: "form-control", rows: 3 %>
+          </div>
+          
+          <div class="d-grid">
+            <%= form.submit "Update Comment", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>
