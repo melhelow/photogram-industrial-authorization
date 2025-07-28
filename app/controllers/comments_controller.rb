@@ -1,5 +1,6 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: %i[ show edit update destroy ]
+   before_action :set_comment, only: [:edit, :update, :destroy]
+  before_action :authorize_comment_owner, only: [:edit, :update, :destroy]
 
   # GET /comments or /comments.json
   def index
@@ -37,14 +38,10 @@ class CommentsController < ApplicationController
 
   # PATCH/PUT /comments/1 or /comments/1.json
   def update
-    respond_to do |format|
-      if @comment.update(comment_params)
-        format.html { redirect_to root_url, notice: "Comment was successfully updated." }
-        format.json { render :show, status: :ok, location: @comment }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @comment.errors, status: :unprocessable_entity }
-      end
+    if @comment.update(comment_params)
+      redirect_back fallback_location: root_path, notice: "Comment updated"
+    else
+      render :edit
     end
   end
 
@@ -64,7 +61,17 @@ class CommentsController < ApplicationController
     end
 
     # Only allow a list of trusted parameters through.
-    def comment_params
-      params.require(:comment).permit(:author_id, :photo_id, :body)
-    end
+   def comment_params
+    params.require(:comment).permit(:body)
+  end
+
+  def authorize_comment_owner
+    return if current_user == @comment.author
+    
+    redirect_back(
+      fallback_location: root_path,
+      alert: "You're not authorized for that." 
+    )
+  end
+
 end
