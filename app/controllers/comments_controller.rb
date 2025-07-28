@@ -1,5 +1,6 @@
 class CommentsController < ApplicationController
   before_action :set_comment, only: %i[ show edit update destroy ]
+  before_action :authorize_comment_access, only: [:create, :destroy]
 
   # GET /comments or /comments.json
   def index
@@ -67,4 +68,22 @@ class CommentsController < ApplicationController
     def comment_params
       params.require(:comment).permit(:author_id, :photo_id, :body)
     end
+
+     def authorize_comment_access  
+    photo = action_name == "create" ?  
+      Photo.find(params[:comment][:photo_id]) :  
+      @comment.photo  
+
+    owner = photo.owner  
+
+    return if current_user == owner ||  
+              !owner.private? ||  
+              current_user.leaders.include?(owner)  
+
+    redirect_back(  
+      fallback_location: root_url,  
+      alert: "Not authorized"  
+    )  
+     
+  end 
 end
