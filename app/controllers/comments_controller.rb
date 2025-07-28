@@ -65,12 +65,12 @@ class CommentsController < ApplicationController
     params.require(:comment).permit(:body)
   end
 
-   def authorize_comment_owner
+  def authorize_comment_owner
     return if current_user == @comment.author
     
     redirect_back(
       fallback_location: root_path,
-      alert: "You can only edit your own comments"
+      alert: "You're not authorized for that." 
     )
   end
 
