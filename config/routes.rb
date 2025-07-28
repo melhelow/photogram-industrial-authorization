@@ -25,4 +25,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+    devise_scope :user do
+    get '/users/sign_out' => 'devise/sessions#destroy' # Add this line
+  end
 end
+
