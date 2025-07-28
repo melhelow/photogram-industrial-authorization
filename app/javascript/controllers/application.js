@@ -1,9 +1,8 @@
-import { Application } from "@hotwired/stimulus"
+// Add this to your existing application.js
+import "@hotwired/turbo-rails"
+import "./controllers"  // Make sure this line exists
 
-const application = Application.start()
+// Add comment controller to registration
+import CommentController from "./controllers/comment_controller"
 
-// Configure Stimulus development experience
-application.debug = false
-window.Stimulus   = application
-
-export { application }
+Stimulus.register("comment", CommentController)
