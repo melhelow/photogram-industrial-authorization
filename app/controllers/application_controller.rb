@@ -6,6 +6,9 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_user_search, if: -> { current_user.present? }
   before_action :configure_permitted_parameters, if: :devise_controller?
+    after_action :verify_authorized, except: :index, unless: :devise_controller?
+
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   def set_user_search
     @q = User.where.not(id: current_user.id).ransack(params[:q])

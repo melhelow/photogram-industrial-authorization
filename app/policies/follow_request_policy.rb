@@ -1,21 +1,23 @@
 class FollowRequestPolicy < ApplicationPolicy
-  def index?
-    user.present?
-  end
-
   def show?
     user == record.sender || user == record.recipient
   end
 
-  def create?
-    user == record.sender
-  end
-
   def update?
-    destroy?
+    user == record.recipient
   end
 
   def destroy?
     user == record.sender || user == record.recipient
+  end
+
+  def create?
+    true
+  end
+
+  class Scope < Scope
+    def resolve
+      scope.where("sender_id = ? OR recipient_id = ?", user.id, user.id)
+    end
   end
 end
