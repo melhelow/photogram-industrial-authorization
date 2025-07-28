@@ -1,6 +1,7 @@
 class CommentsController < ApplicationController
-   before_action :set_comment, only: [:edit, :update, :destroy]
-  before_action :authorize_comment_owner, only: [:edit, :update, :destroy]
+  before_action :set_comment, only: [:edit, :update, :destroy]
+  before_action :authorize_comment, only: [:edit, :update, :destroy]
+  after_action :verify_authorized, only: [:edit, :update, :destroy]
 
   # GET /comments or /comments.json
   def index
@@ -25,6 +26,8 @@ class CommentsController < ApplicationController
     @comment = Comment.new(comment_params)
     @comment.author = current_user
 
+    authorize @comment  # Authorize creation
+
     respond_to do |format|
       if @comment.save
         format.html { redirect_back fallback_location: root_path, notice: "Comment was successfully created." }
@@ -38,6 +41,8 @@ class CommentsController < ApplicationController
 
   # PATCH/PUT /comments/1 or /comments/1.json
   def update
+    authorize @comment
+
     if @comment.update(comment_params)
       redirect_back fallback_location: root_path, notice: "Comment updated"
     else
@@ -47,6 +52,8 @@ class CommentsController < ApplicationController
 
   # DELETE /comments/1 or /comments/1.json
   def destroy
+    authorize @comment
+
     @comment.destroy
     respond_to do |format|
       format.html { redirect_back fallback_location: root_url, notice: "Comment was successfully destroyed." }
@@ -55,23 +62,16 @@ class CommentsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_comment
       @comment = Comment.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
-   def comment_params
-    params.require(:comment).permit(:body)
-  end
+    def comment_params
+      params.require(:comment).permit(:body)
+    end
 
-  def authorize_comment_owner
-    return if current_user == @comment.author
-    
-    redirect_back(
-      fallback_location: root_path,
-      alert: "You're not authorized for that." 
-    )
-  end
-
+    def authorize_comment
+      authorize @comment
+    end
 end
