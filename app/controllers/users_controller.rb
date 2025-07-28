@@ -5,7 +5,20 @@ class UsersController < ApplicationController
   def index
     @users = @q.result
   end
-
+  def pending
+  @user = User.find_by(username: params[:username])
+  
+  # Add authorization check
+  if current_user != @user
+    redirect_back(
+      fallback_location: root_path,
+      alert: "You can only view your own pending requests"
+    )
+    return
+  end
+  
+  @pending_requests = @user.pending_received_follow_requests
+end
   private
 
     def set_user
