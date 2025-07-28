@@ -1,25 +1,32 @@
 <li class="list-group-item">
   <div class="d-flex">
     <div class="flex-shrink-0">
-      <%= image_tag comment.author.avatar_image_url, class: "rounded-circle me-2 img-cover img-small" %>
+      <%= image_tag comment.author.avatar_image_url, class: "rounded-circle img-small me-2" %>
     </div>
     <div class="flex-grow-1 ms-3">
-      <div class="d-flex align-items-center justify-content-between">
-        <h5 class="mt-0">
-          <%= link_to comment.author.username, user_path(comment.author.username), class: "text-dark link-underline-dark link-underline-opacity-0 link-underline-opacity-100-hover" %>
-        </h5>
+      <h6 class="mt-0 mb-1">
+        <%= link_to comment.author.username, user_path(comment.author.username), class: "text-dark" %>
+        <small class="text-muted"><%= time_ago_in_words(comment.created_at) %> ago</small>
+      </h6>
+      <p class="mb-1"><%= comment.body %></p>
 
-        <div>
-          <%= link_to edit_comment_path(comment), class: "btn btn-link btn-sm text-muted" do %>
-            <i class="fas fa-edit fa-fw"></i>
+      <% if current_user == comment.author %>
+        <div class="mt-2">
+          <%= link_to edit_comment_path(comment), class: "text-primary me-3" do %>
+            <i class="fas fa-edit me-1"></i> Edit
           <% end %>
-
-          <%= button_to comment, method: :delete, class: "btn btn-link btn-sm text-muted", form_class: "btn btn-sm btn-link" do %>
-            <i class="fas fa-trash fa-fw"></i>
+          
+          <%= link_to comment_path(comment),
+                      method: :delete,
+                      data: { 
+                        turbo_method: :delete, 
+                        turbo_confirm: "Are you sure?" 
+                      },
+                      class: "text-danger" do %>
+            <i class="fas fa-trash me-1"></i> Delete
           <% end %>
         </div>
-      </div>
-      <p><%= comment.body %></p>
+      <% end %>
     </div>
-  </div> 
+  </div>
 </li>

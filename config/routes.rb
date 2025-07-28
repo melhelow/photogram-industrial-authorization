@@ -3,10 +3,10 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  resources :comments
-  resources :follow_requests
-  resources :likes
-  resources :photos
+  resources :comments, except: [:index, :show]
+   resources :follow_requests, except: [:index, :show, :new, :edit]  
+  resources :likes, only: [:create, :destroy]  
+  resources :photos, except: [:index]  
   resources :users, only: [ :index ]
 
   get ":username" => "users#show", as: :user
@@ -25,4 +25,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+    devise_scope :user do
+    get '/users/sign_out' => 'devise/sessions#destroy' # Add this line
+  end
 end
+
