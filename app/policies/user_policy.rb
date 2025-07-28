@@ -1,6 +1,6 @@
 class UserPolicy < ApplicationPolicy
   def show?
-    true  # Everyone can view profiles
+  user == record || !record.private? || record.followers.include?(user)
   end
 
   def show_photos?
